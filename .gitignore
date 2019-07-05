@@ -3,3 +3,8 @@
 ################################################################################
 
 /.vs
+/Data/.vs/Data
+/Data/bin/Debug
+/Data/obj
+/Data.sln.DotSettings.user
+/Data/Data.csproj.user
