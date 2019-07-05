@@ -10,8 +10,8 @@ namespace ErikTheCoder.Data
     public abstract class LoggedDbConnection : DbConnection
     {
         protected DbConnection Connection;
-        private ILogger _logger;
-        private Func<Guid> _getCorrelationId;
+        private readonly ILogger _logger;
+        private readonly Guid _correlationId;
         private bool _disposed;
 
 
@@ -25,19 +25,19 @@ namespace ErikTheCoder.Data
         public override string Database => Connection.Database;
 
 
-        public override ConnectionState State => Connection.State;
-
-
         public override string DataSource => Connection.DataSource;
 
 
         public override string ServerVersion => Connection.ServerVersion;
 
 
-        protected LoggedDbConnection(ILogger Logger, Func<Guid> GetCorrelationId)
+        public override ConnectionState State => Connection.State;
+        
+        
+        protected LoggedDbConnection(ILogger Logger, Guid CorrelationId)
         {
             _logger = Logger;
-            _getCorrelationId = GetCorrelationId;
+            _correlationId = CorrelationId;
         }
 
 
@@ -49,50 +49,48 @@ namespace ErikTheCoder.Data
             if (_disposed) return;
             if (Disposing)
             {
-                // Release managed resources.
-                _getCorrelationId = null;
+                // No managed resources to release.
             }
             // Release unmanaged resources.
-            _logger?.Dispose();
-            _logger = null;
             Connection?.Dispose();
             Connection = null;
+            // Do not release logger.  Its lifetime is controlled by caller.
             _disposed = true;
-        }
-
-
-        public override void Open()
-        {
-            _logger.Log(_getCorrelationId(), $"Opening database connection to {Connection.ConnectionString}.");
-            Connection.Open();
-        }
-
-
-        public override void Close()
-        {
-            _logger.Log(_getCorrelationId(), $"Closing database connection to {Connection.ConnectionString}.");
-            Connection.Close();
         }
 
 
         public override void ChangeDatabase(string DatabaseName)
         {
-            _logger.Log(_getCorrelationId(), $"Changing database to {DatabaseName}.");
+            _logger.Log(_correlationId, $"Changing database to {DatabaseName}.");
             Connection.ChangeDatabase(DatabaseName);
+        }
+
+
+        public override void Close()
+        {
+            _logger.Log(_correlationId, $"Closing database connection to {Connection.ConnectionString}.");
+            Connection.Close();
+        }
+
+
+        public override void Open()
+        {
+            _logger.Log(_correlationId, $"Opening database connection to {Connection.ConnectionString}.");
+            Connection.Open();
         }
 
 
         protected override DbTransaction BeginDbTransaction(IsolationLevel IsolationLevel)
         {
-            _logger.Log(_getCorrelationId(), $"Beginning database transaction with IsolationLevel = {IsolationLevel}.");
+            _logger.Log(_correlationId, $"Beginning database transaction with IsolationLevel = {IsolationLevel}.");
             return Connection.BeginTransaction();
         }
 
 
         protected override DbCommand CreateDbCommand()
         {
-            _logger.Log(_getCorrelationId(), "Creating database command.");
-            return new LoggedDbCommand(_logger, _getCorrelationId, Connection.CreateCommand());
+            _logger.Log(_correlationId, "Creating database command.");
+            return new LoggedDbCommand(_logger, _correlationId, Connection.CreateCommand());
         }
     }
 }

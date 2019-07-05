@@ -7,7 +7,7 @@ namespace ErikTheCoder.Data
 {
     public class LoggedSqlConnection : LoggedDbConnection
     {
-        public LoggedSqlConnection(ILogger Logger, Func<Guid> GetCorrelationId, string Connection) : base(Logger, GetCorrelationId)
+        public LoggedSqlConnection(ILogger Logger, Guid CorrelationId, string Connection) : base(Logger, CorrelationId)
         {
             this.Connection = new SqlConnection(Connection);
         }

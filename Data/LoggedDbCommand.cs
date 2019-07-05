@@ -10,8 +10,8 @@ namespace ErikTheCoder.Data
     // Cannot inherit from SqlCommand because it's a sealed class.
     public sealed class LoggedDbCommand : DbCommand
     {
-        private ILogger _logger;
-        private Func<Guid> _getCorrelationId;
+        private readonly ILogger _logger;
+        private readonly Guid _correlationId;
         private DbCommand _command;
         private bool _disposed;
 
@@ -68,10 +68,10 @@ namespace ErikTheCoder.Data
         }
         
 
-        public LoggedDbCommand(ILogger Logger, Func<Guid> GetCorrelationId, DbCommand Command)
+        public LoggedDbCommand(ILogger Logger, Guid CorrelationId, DbCommand Command)
         {
             _logger = Logger;
-            _getCorrelationId = GetCorrelationId;
+            _correlationId = CorrelationId;
             _command = Command;
         }
 
@@ -84,21 +84,19 @@ namespace ErikTheCoder.Data
             if (_disposed) return;
             if (Disposing)
             {
-                // Release managed resources.
-                _getCorrelationId = null;
+                // No managed resources to release.
             }
             // Release unmanaged resources.
-            _logger?.Dispose();
-            _logger = null;
             _command?.Dispose();
             _command = null;
+            // Do not release logger.  Its lifetime is controlled by caller.
             _disposed = true;
         }
 
 
         public override void Cancel()
         {
-            _logger.Log(_getCorrelationId(), "Cancelling database command.");
+            _logger.Log(_correlationId, "Cancelling database command.");
             _command.Cancel();
         }
 
@@ -121,7 +119,7 @@ namespace ErikTheCoder.Data
 
         public override void Prepare()
         {
-            _logger.Log(_getCorrelationId(), "Preparing database command.");
+            _logger.Log(_correlationId, "Preparing database command.");
             _command.Prepare();
         }
         
@@ -146,7 +144,7 @@ namespace ErikTheCoder.Data
                 if ((parameter.Direction == ParameterDirection.Output) || (parameter.Direction == ParameterDirection.ReturnValue)) continue;
                 stringBuilder.AppendLine($"Database command parameter {parameter.ParameterName} = {parameter.Value}.");
             }
-            _logger.Log(_getCorrelationId(), stringBuilder.ToString());
+            _logger.Log(_correlationId, stringBuilder.ToString());
         }
 
 
@@ -158,7 +156,7 @@ namespace ErikTheCoder.Data
                 if ((parameter.Direction == ParameterDirection.Input) || (parameter.Direction == ParameterDirection.InputOutput)) continue;
                 stringBuilder.AppendLine($"Database command parameter {parameter.ParameterName} = {parameter.Value}.");
             }
-            _logger.Log(_getCorrelationId(), stringBuilder.ToString());
+            _logger.Log(_correlationId, stringBuilder.ToString());
         }
     }
 }
