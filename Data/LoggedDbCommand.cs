@@ -8,7 +8,7 @@ using ErikTheCoder.Logging;
 namespace ErikTheCoder.Data
 {
     // Cannot inherit from SqlCommand because it's a sealed class.
-    public sealed class LoggedDbCommand : DbCommand
+    public class LoggedDbCommand : DbCommand
     {
         private readonly ILogger _logger;
         private readonly Guid _correlationId;
