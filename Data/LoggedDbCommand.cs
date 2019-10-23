@@ -153,7 +153,7 @@ namespace ErikTheCoder.Data
             StringBuilder stringBuilder = new StringBuilder();
             foreach (IDataParameter parameter in _command.Parameters)
             {
-                if ((parameter.Direction == ParameterDirection.Input) || (parameter.Direction == ParameterDirection.InputOutput)) continue;
+                if (parameter.Direction == ParameterDirection.Input) continue;
                 stringBuilder.AppendLine($"Database command parameter {parameter.ParameterName} = {parameter.Value}.");
             }
             _logger.Log(_correlationId, stringBuilder.ToString());
