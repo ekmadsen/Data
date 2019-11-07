@@ -18,8 +18,20 @@ namespace ErikTheCoder.Data
         public static async Task QueryAsync<TFirst, TSecond>(this IDbConnection Connection, string Sql, Action<TFirst, TSecond> Map, object Param = null,
             IDbTransaction Transaction = null, bool Buffered = true, string SplitOn = "Id", int? CommandTimeout = null, CommandType? CommandType = null)
         {
-            Action<TFirst, TSecond, object, object, object, object, object> map = (First, Second, Third, Fourth, Fifth, Sixth, Seventh) => Map(First, Second);
-            await QueryAsync(Connection, Sql, map, Param, Transaction, Buffered, SplitOn, CommandTimeout, CommandType);
+            Func<TFirst, TSecond, bool> map = (First, Second) =>
+            {
+                Map(First, Second);
+                return true;
+            };
+            IEnumerable results = await Connection.QueryAsync(Sql, map, Param, Transaction, Buffered, SplitOn, CommandTimeout, CommandType);
+            if (!Buffered)
+            {
+                // Must traverse results to call map func on each row returned by query.
+                // ReSharper disable once NotAccessedVariable
+                bool lastResult;
+                // ReSharper disable once RedundantAssignment
+                foreach (bool result in results) lastResult = result; // Prevent for loop from being removed by compiler as a no-op.
+            }
         }
 
 
