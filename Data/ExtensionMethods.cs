@@ -10,7 +10,7 @@ namespace ErikTheCoder.Data
     [UsedImplicitly]
     public static class ExtensionMethods
     {
-        // These QueryAsync methods enable mapping column values to a variable captured by the lambda (Map Action) in a single traversal of the SQL result set.
+        // These QueryAsync methods enable mapping column values to variables captured by the lambda (Map Action) in a single traversal of the SQL result set.
         // Because calling code has no need to traverse the IEnumerable returned by the Dapper extension method, no value is returned.
         // Without this extension method, calling code would have to pass a Func to Dapper's extension method even though it never references the Func's return value.
         [UsedImplicitly]
