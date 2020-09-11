@@ -104,7 +104,7 @@ namespace ErikTheCoder.Data
         public override int ExecuteNonQuery()
         {
             LogCommandBeforeExecuted();
-            int result = _command.ExecuteNonQuery();
+            var result = _command.ExecuteNonQuery();
             LogCommandAfterExecuted();
             return result;
         }
@@ -136,7 +136,7 @@ namespace ErikTheCoder.Data
 
         private void LogCommandBeforeExecuted()
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"Database command type = {_command.CommandType}");
             stringBuilder.AppendLine($"Database command text = {_command.CommandText}.");
             foreach (IDataParameter parameter in _command.Parameters)
@@ -150,7 +150,7 @@ namespace ErikTheCoder.Data
 
         private void LogCommandAfterExecuted()
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            var stringBuilder = new StringBuilder();
             foreach (IDataParameter parameter in _command.Parameters)
             {
                 if (parameter.Direction == ParameterDirection.Input) continue;
