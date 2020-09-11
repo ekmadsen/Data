@@ -17,7 +17,7 @@ namespace ErikTheCoder.Data
 
         public override async Task<DbConnection> OpenConnectionAsync(Guid CorrelationId)
         {
-            DbConnection connection = new LoggedSqlConnection(Logger, CorrelationId, Connection);
+            var connection = new LoggedSqlConnection(Logger, CorrelationId, Connection);
             await connection.OpenAsync();
             return connection;
         }
