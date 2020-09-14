@@ -20,6 +20,7 @@ namespace ErikTheCoder.Data
         }
 
 
+        public abstract DbConnection OpenConnection(Guid CorrelationId);
         public abstract Task<DbConnection> OpenConnectionAsync(Guid CorrelationId);
     }
 }

@@ -8,7 +8,7 @@ namespace ErikTheCoder.Data
 {
     public interface ILoggedDatabase
     {
-        [UsedImplicitly]
-        Task<DbConnection> OpenConnectionAsync(Guid CorrelationId);
+        [UsedImplicitly] DbConnection OpenConnection(Guid CorrelationId);
+        [UsedImplicitly] Task<DbConnection> OpenConnectionAsync(Guid CorrelationId);
     }
 }
