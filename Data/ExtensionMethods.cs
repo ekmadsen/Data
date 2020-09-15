@@ -95,5 +95,37 @@ namespace ErikTheCoder.Data
             };
             await Connection.QueryAsync(Sql, map, Param, Transaction, true, SplitOn, CommandTimeout, CommandType);
         }
+
+
+        [UsedImplicitly]
+        public static bool TryCommit(this IDbTransaction Transaction)
+        {
+            try
+            {
+                Transaction.Commit();
+                return true;
+            }
+            catch
+            {
+                // Ignore exception.
+                return false;
+            }
+        }
+
+
+        [UsedImplicitly]
+        public static bool TryRollback(this IDbTransaction Transaction)
+        {
+            try
+            {
+                Transaction.Rollback();
+                return true;
+            }
+            catch
+            {
+                // Ignore exception.
+                return false;
+            }
+        }
     }
 }
