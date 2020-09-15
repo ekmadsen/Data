@@ -14,14 +14,7 @@ namespace ErikTheCoder.Data
         {
         }
 
-        public override DbConnection OpenConnection(Guid CorrelationId)
-        {
-            var connection = new LoggedSqlConnection(Logger, CorrelationId, Connection);
-            connection.Open();
-            return connection;
-        }
-
-
+        
         public override async Task<DbConnection> OpenConnectionAsync(Guid CorrelationId)
         {
             var connection = new LoggedSqlConnection(Logger, CorrelationId, Connection);
