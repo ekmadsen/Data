@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.Common;
+using System.Data;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 
@@ -8,6 +8,6 @@ namespace ErikTheCoder.Data
 {
     public interface ILoggedDatabase
     {
-        [UsedImplicitly] Task<DbConnection> OpenConnectionAsync(Guid CorrelationId);
+        [UsedImplicitly] Task<IDbConnection> OpenConnectionAsync(Guid CorrelationId);
     }
 }

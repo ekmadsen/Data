@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.Common;
+using System.Data;
 using System.Threading.Tasks;
 using ErikTheCoder.Logging;
 using JetBrains.Annotations;
@@ -15,7 +15,7 @@ namespace ErikTheCoder.Data
         }
 
         
-        public override async Task<DbConnection> OpenConnectionAsync(Guid CorrelationId)
+        public override async Task<IDbConnection> OpenConnectionAsync(Guid CorrelationId)
         {
             var connection = new LoggedSqlConnection(Logger, CorrelationId, Connection);
             await connection.OpenAsync();

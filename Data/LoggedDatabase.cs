@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.Common;
+using System.Data;
 using System.Threading.Tasks;
 using ErikTheCoder.Logging;
 
@@ -20,6 +20,6 @@ namespace ErikTheCoder.Data
         }
 
 
-        public abstract Task<DbConnection> OpenConnectionAsync(Guid CorrelationId);
+        public abstract Task<IDbConnection> OpenConnectionAsync(Guid CorrelationId);
     }
 }
